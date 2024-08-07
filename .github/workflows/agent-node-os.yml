@@ -1,0 +1,37 @@
+---
+name: Agent Node Image
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  image:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: "Build Image"
+        uses: usimd/pi-gen-action@v1
+        id: build
+        with:
+          image-name: agent-node
+          username: agent
+          password: agent
+          enable-ssh: 1
+          keyboard-keymap: de
+          keyboard-layout: German
+          locale: de_DE.UTF-8
+          timezone: Europe/Berlin
+          stage-list: stage0 stage1 stage2 ${{ github.workspace }}/agent-node/custom-stage
+          verbose-output: true
+
+      - name: "Upload image"
+        uses: actions/upload-artifact@v4
+        with:
+          name: agent-node-image
+          path: ${{ steps.build.outputs.image-path }}
+          if-no-files-found: error

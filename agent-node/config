@@ -1,0 +1,10 @@
+IMG_NAME=agent-node
+FIRST_USER_NAME="agent"
+FIRST_USER_PASS="agent"
+ENABLE_SSH=1
+LOCALE_DEFAULT='de_DE.UTF-8'
+KEYBOARD_KEYMAP='de'
+KEYBOARD_LAYOUT='German'
+TIMEZONE_DEFAULT='Europe/Berlin'
+DEPLOY_COMPRESSION=none
+STAGE_LIST="stage0 stage1 stage2 custom-stage"

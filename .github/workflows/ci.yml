@@ -1,0 +1,62 @@
+---
+name: Embedded Linux CI
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: control-node
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Prepare environment
+        run: |
+          mkdir -p $HOME/.local/bin
+          echo "$HOME/.local/bin" >> $GITHUB_PATH
+          GIT_HASH="$(git rev-parse --short $GITHUB_SHA)"
+          echo "Git hash: $GIT_HASH"
+          echo "git_hash=$GIT_HASH" >> $GITHUB_ENV
+          VERSION="$(git describe --tags --abbrev=0)"
+          echo "Version: $VERSION"
+          echo "version=$VERSION" >> $GITHUB_ENV
+
+      - name: Compile
+        run: |
+          cd ./firmware 
+          ./build-image.sh
+
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: verdin-firmware
+          path: ./build/deploy/
+          if-no-files-found: error
+
+  test:
+    runs-on: agent-node
+    needs: build
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Download build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: firmware-${{ matrix.board.name }}
+          path: ${{ github.workspace }}/build
+
+      - name: Flash Image
+        run: |
+          uuu --lsusb
+          uuu -b emmc_all ./build/bootloader ./build/image.wic
+
+      - name: Test Image
+        run: |
+          cd tests
+          ./setup_and_run_tbot.sh

@@ -1,0 +1,3 @@
+build/
+agent-node/pi-gen
+*_venv/

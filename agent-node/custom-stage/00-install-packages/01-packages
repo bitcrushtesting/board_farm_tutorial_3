@@ -1,0 +1,9 @@
+curl
+git
+jq
+python3-paramiko
+python3-pytest
+tmate
+tmux
+tree
+uuu
