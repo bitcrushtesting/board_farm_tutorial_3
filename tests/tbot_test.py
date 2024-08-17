@@ -1,3 +1,5 @@
+# Copyright © 2024 Bitcrush Testing
+
 import tbot
 
 # Define the board and environment

@@ -95,7 +95,16 @@ install_python() {
         python3 \
         python3-pip \
         python3-pytest \
+        chrpath \
+        lz4 \
         && sudo apt-get clean
+}
+
+install_repo() {
+    mkdir -p ~/bin
+    export PATH=~/bin:$PATH
+    curl https://commondatastorage.googleapis.com/git-repo-downloads/repo > ~/bin/repo
+    chmod a+x ~/bin/repo
 }
 
 # Main script execution
@@ -108,7 +117,10 @@ if [[ "$USER_ID" -eq 0 ]] && [[ -z "$RUNNER_ALLOW_RUNASROOT" ]]; then
 fi
 
 install_github_runner
-if ! command -v gh &> /dev/null 
-then
+if ! command -v gh &> /dev/null; then
     install_github_cli
+fi
+
+if ! command -v repo >/dev/null 2>&1; then
+    install_repo
 fi

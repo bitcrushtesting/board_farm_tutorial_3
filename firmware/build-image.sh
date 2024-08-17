@@ -2,7 +2,14 @@
 
 # Copyright © 2024 Bitcrush Testing
 
-INSTALL_FOLDER="${HOME}/oe-core"
+# Check if an argument is given
+if [ -z "$1" ]; then
+    echo "Error: No install folder provided."
+    echo "Usage: $0 <install_folder>"
+    exit 1
+fi
+
+INSTALL_FOLDER="$1"
 CONF_FILE="./conf/local.conf"
 
 if [ ! -f /etc/debian_version ]; then
@@ -18,18 +25,10 @@ fi
 mkdir -p "$INSTALL_FOLDER"
 cd "$INSTALL_FOLDER" || exit 
 
-sudo apt install git chrpath lz4
-
-if ! command -v repo >/dev/null 2>&1; then
-    mkdir ~/bin
-    export PATH=~/bin:$PATH
-    curl https://commondatastorage.googleapis.com/git-repo-downloads/repo > ~/bin/repo
-    chmod a+x ~/bin/repo
-fi
-
 repo init -u git://git.toradex.com/toradex-manifest.git -b kirkstone-6.x.y -m tdxref/default.xml
 repo sync
 
+# shellcheck disable=SC1091
 . export
 
 # Adapt build/conf/local.conf 

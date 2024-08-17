@@ -2,10 +2,21 @@
 
 # Copyright © 2024 Bitcrush Testing
 
-IMAGE_NAME="rpi-netboot-server"
-CONTAINER_NAME="rpi-netboot-server"
+IMAGE_NAME="agent-node-netboot-image"
+CONTAINER_NAME="agent-node-netboot-container"
 TFTP_DIR="/srv/tftp/agent-node-boot"
 NFS_DIR="/srv/nfs/agent-node-root"
+
+if [ -d "${TFTP_DIR}" ]; then
+    echo "TFTP directory not found: ${TFTP_DIR}"
+    exit 1
+fi
+
+if [ -d "${NFS_DIR}" ]; then
+    echo "NFS directory not found: ${NFS_DIR}"
+    exit 1
+fi
+
 
 # Check if the Docker image exists
 if [[ "$(docker images -q "$IMAGE_NAME" 2> /dev/null)" == "" ]]; then
@@ -49,3 +60,5 @@ else
 
     echo "Docker container '$CONTAINER_NAME' is now running."
 fi
+
+echo "----- DONE -----"
